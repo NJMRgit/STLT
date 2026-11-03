@@ -1,0 +1,8 @@
+node_modules/
+.millennium/
+*.star
+dist/
+*.log
+*.bak
+*.bak.*
+.DS_Store
