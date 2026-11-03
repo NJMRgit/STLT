@@ -370,10 +370,17 @@ function applyFriendsChatBackground(popup: any) {
 			doc.head.appendChild(style);
 		}
 		style.textContent = `
-.chatDialogs, .emptyChatDialogs, .multiChatDialog {
+html, body, #popup_target, .chat_main, .chat_main_flex {
 	background:
-		radial-gradient(ellipse at 25% 0%, rgba(var(--st-accent-1, 102, 108, 255), 0.2), transparent 60%),
-		linear-gradient(135deg, rgba(64, 68, 78, 0.45), rgba(20, 24, 30, 0.55)) !important;
+		radial-gradient(ellipse at 25% 0%, rgba(var(--st-accent-1, 102, 108, 255), 0.24), transparent 65%),
+		linear-gradient(135deg, rgba(64, 68, 78, 0.55), rgba(20, 24, 30, 0.6)) !important;
+	background-color: rgba(30, 34, 42, 0.45) !important;
+}
+.friendsListContainer {
+	background: linear-gradient(180deg, rgba(64, 68, 78, 0.45), rgba(20, 24, 30, 0.55)) !important;
+}
+.chatDialogs, .emptyChatDialogs, .multiChatDialog {
+	background: transparent !important;
 }`;
 	} catch {}
 }
