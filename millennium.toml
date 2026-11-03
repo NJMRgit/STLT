@@ -1,7 +1,7 @@
 [plugin]
 id = "steam-linux-transparency"
 name = "Steam Linux Transparency"
-version = "2.4.0"
+version = "2.4.1"
 author = "NJMRgit"
 description = "Native per-pixel window transparency for Steam on Linux. Themes with transparent backgrounds can show the desktop."
 

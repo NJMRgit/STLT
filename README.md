@@ -60,6 +60,7 @@ Starlight installs the plugin to `~/.local/share/millennium/plugins/`. Enable **
 - The plugin does not use `_NET_WM_WINDOW_OPACITY`; it does not fade the whole window.
 - v2.3.0 removes the continuous CDP polling loop that could trigger a Steam UI reload and recreate opaque windows.
 - v2.4.0 fixes the native cause of opaque windows after a Steam UI reload. The webhelper wrapper now removes `-use_xcomposite_workaround` and sets `--default-background-color=00000000`; the plugin restarts the webhelper once when it applies the patch. This works without a full Steam client restart. **Restart Steam** remains as a fallback.
+- v2.4.1 adds a theme-aware translucent Mica background to the Friends List's empty chat pane. The pane is natively transparent, but Steam paints no background there, so it looked black over a dark desktop. The layer uses the active theme's accent/background variables, keeps the window ARGB, and does not use whole-window opacity or screenshots.
 - Settings and Friends List are recreated with `Composited | TransparentParentWindow` after Big Picture exits, so their transparency survives the mode switch.
 - After exiting Big Picture, the plugin restores the main window's `1010x600` minimum size and its previous desktop window size. This is built into the patched desktop window code, so it still works if the Steam UI reloads on exit.
 - Settings, Friends List, context menus, and other Steam popup windows get the same flags. Existing popups may need to be reopened after the patch is applied.
