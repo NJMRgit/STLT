@@ -17,11 +17,12 @@ That makes Steam create a 32-bit ARGB window, so the theme's alpha reveals the d
 ## How it works
 
 1. After Steam starts, the plugin backend patches `steamui/sp.js` on disk and backs up the original as `sp.js.millennium-original`.
-2. The patch adds `Composited | TransparentParentWindow` to the main desktop window's `eCreationFlags`.
-3. The frontend calls `SteamClient.Browser.RestartJSContext()` once. That reloads the Steam UI and recreates the main window and its popups with the patched flags.
-4. Context menu popups are created with `Resizable | Composited | TransparentParentWindow` (`4194576`) instead of the original popup-menu flags. This makes them managed normal windows, so KWin's Glass/Blur effect can apply compositor blur when **Exclude menus** is off. The plugin also sets the same `createflags` attribute on the popup HTML. Menus may then get a normal window decoration instead of the borderless popup look.
-5. The patched `sp.js` stays in place, so later Steam UI reloads (for example after changing a SpaceTheme option) recreate the windows transparently. If a reload loses the flags, the plugin reapplies the patch and reloads once.
-6. Disabling the plugin restores `sp.js` from the backup and reloads the UI.
+2. It also patches `ubuntu12_64/steamwebhelper_sniper_wrap.sh`: it removes Steam's `-use_xcomposite_workaround` webhelper argument and adds `--default-background-color=00000000`. The running webhelper is restarted once so the flag takes effect. This fixes the opaque native window state that appears after a Steam UI reload.
+3. The `sp.js` patch adds `Composited | TransparentParentWindow` to the main desktop window's `eCreationFlags`.
+4. The frontend calls `SteamClient.Browser.RestartJSContext()` once. That reloads the Steam UI and recreates the main window and its popups with the patched flags.
+5. Context menu popups are created with `Resizable | Composited | TransparentParentWindow` (`4194576`) instead of the original popup-menu flags. This makes them managed normal windows, so KWin's Glass/Blur effect can apply compositor blur when **Exclude menus** is off. The plugin also sets the same `createflags` attribute on the popup HTML. Menus may then get a normal window decoration instead of the borderless popup look.
+6. The patched `sp.js` and webhelper wrapper stay in place, so later Steam UI reloads recreate the windows transparently. If Steam restores either file, the plugin reapplies the patch; a restored wrapper triggers one webhelper restart.
+7. Disabling the plugin restores `sp.js` and the webhelper wrapper from their backups and reloads the UI.
 
 Steam overwrites `sp.js` on a full client start or update, so the plugin reapplies the patch after each start. The plugin does not use Big Picture for recovery.
 
@@ -49,8 +50,8 @@ Starlight installs the plugin to `~/.local/share/millennium/plugins/`. Enable **
 
 - **Native window transparency** — patches `sp.js` and reloads the Steam UI.
 - **Apply automatically on startup** — reapplies after a Steam start or UI reload if transparency is missing.
-- **Reapply now** — applies the current setting immediately.
-- **Restart Steam** — restarts the Steam client to restore ARGB transparency after a Steam UI reload has made windows opaque.
+- **Reapply now** — applies the current setting immediately, including the webhelper fix.
+- **Restart Steam** — fallback: fully restarts the Steam client if transparency is still wrong. The automatic webhelper fix normally makes this unnecessary.
 
 ## Notes
 
@@ -58,7 +59,7 @@ Starlight installs the plugin to `~/.local/share/millennium/plugins/`. Enable **
 - Steam updates can change the minified `sp.js` layout. If transparency stops after an update, click **Reapply now** or disable/re-enable the plugin.
 - The plugin does not use `_NET_WM_WINDOW_OPACITY`; it does not fade the whole window.
 - v2.3.0 removes the continuous CDP polling loop that could trigger a Steam UI reload and recreate opaque windows.
-- Steam UI reloads (theme changes, plugin saves, etc.) can still cause the Steam client's native window manager to create opaque windows. This is a Steam client limitation; a full Steam client restart restores ARGB visuals. Use **Restart Steam** in the plugin settings or restart Steam manually.
+- v2.4.0 fixes the native cause of opaque windows after a Steam UI reload. The webhelper wrapper now removes `-use_xcomposite_workaround` and sets `--default-background-color=00000000`; the plugin restarts the webhelper once when it applies the patch. This works without a full Steam client restart. **Restart Steam** remains as a fallback.
 - Settings and Friends List are recreated with `Composited | TransparentParentWindow` after Big Picture exits, so their transparency survives the mode switch.
 - After exiting Big Picture, the plugin restores the main window's `1010x600` minimum size and its previous desktop window size. This is built into the patched desktop window code, so it still works if the Steam UI reloads on exit.
 - Settings, Friends List, context menus, and other Steam popup windows get the same flags. Existing popups may need to be reopened after the patch is applied.

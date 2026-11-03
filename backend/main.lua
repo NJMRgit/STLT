@@ -206,6 +206,108 @@ function restore_sp_patch()
     return "restored"
 end
 
+
+local function wrapper_path()
+    return fs.join(millennium.steam_path(), "ubuntu12_64", "steamwebhelper_sniper_wrap.sh")
+end
+
+local WRAPPER_ORIGINAL = 'exec ./steamwebhelper "$@"'
+local WRAPPER_PATCHED = [=[args=()
+for a in "$@"; do
+    [ "$a" = "-use_xcomposite_workaround" ] || args+=("$a")
+done
+exec ./steamwebhelper --default-background-color=00000000 "${args[@]}"]=]
+
+---@ffi
+---@return string
+function ensure_wrapper_patch()
+    local path = wrapper_path()
+    local content, err = utils.read_file(path)
+    if not content then
+        log("read steamwebhelper wrapper failed: " .. tostring(err))
+        return "read_failed"
+    end
+    if content:find("--default-background-color=00000000", 1, true) and content:find('args+=("$a")', 1, true) then
+        return "already"
+    end
+    local patched = replace_plain(content, WRAPPER_ORIGINAL, WRAPPER_PATCHED)
+    if not patched then
+        log("steamwebhelper wrapper pattern not found")
+        return "pattern_not_found"
+    end
+    local backup = path .. ".millennium-original"
+    if not fs.exists(backup) then
+        local ok, write_err = utils.write_file(backup, content)
+        if not ok then
+            log("wrapper backup failed: " .. tostring(write_err))
+        end
+    end
+    local ok, write_err = utils.write_file(path, patched)
+    if not ok then
+        log("write steamwebhelper wrapper failed: " .. tostring(write_err))
+        return "write_failed"
+    end
+    log("steamwebhelper wrapper patched")
+    return "patched"
+end
+
+---@ffi
+---@return string
+function restore_wrapper_patch()
+    local path = wrapper_path()
+    local backup = path .. ".millennium-original"
+    if not fs.exists(backup) then
+        log("no steamwebhelper wrapper backup")
+        return "no_backup"
+    end
+    local content, err = utils.read_file(backup)
+    if not content then
+        log("read wrapper backup failed: " .. tostring(err))
+        return "read_failed"
+    end
+    local ok, write_err = utils.write_file(path, content)
+    if not ok then
+        log("restore steamwebhelper wrapper failed: " .. tostring(write_err))
+        return "write_failed"
+    end
+    log("steamwebhelper wrapper restored")
+    return "restored"
+end
+
+---@ffi
+---@return boolean
+function webhelper_has_legacy_flag()
+    local p = io.popen("ps -eo cmd | grep '[.]\\/steamwebhelper' | grep -v -- '--type=' | head -1")
+    if not p then
+        return false
+    end
+    local s = p:read("*a") or ""
+    p:close()
+    return s:find("-use_xcomposite_workaround", 1, true) ~= nil
+end
+
+---@ffi
+---@return boolean
+function restart_webhelper()
+    local script = [[
+for p in $(pgrep -f '^[.]/steamwebhelper '); do
+    if ! tr '\0' ' ' < /proc/$p/cmdline | grep -q -- '--type='; then
+        kill "$p"
+        exit 0
+    fi
+done
+]]
+    local path = "/tmp/stlt-restart-webhelper.sh"
+    local ok, err = utils.write_file(path, script)
+    if not ok then
+        log("write webhelper restart script failed: " .. tostring(err))
+        return false
+    end
+    os.execute("setsid sh " .. path .. " >/dev/null 2>&1 &")
+    log("webhelper restart requested")
+    return true
+end
+
 ---@ffi
 ---@return boolean
 function schedule_steam_restart()
@@ -216,6 +318,8 @@ end
 
 local function on_load()
     log("backend loaded")
+    local wrapper = ensure_wrapper_patch()
+    log("wrapper on load: " .. tostring(wrapper))
     millennium.ready()
 end
 
