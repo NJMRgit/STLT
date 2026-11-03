@@ -2,40 +2,76 @@
 
 [Repository](https://github.com/NJMRgit/STLT) · [Releases](https://github.com/NJMRgit/STLT/releases)
 
-A Millennium plugin that gives the Steam client **native per-pixel window transparency** on Linux, without using window opacity. The main window, Settings, Friends List, context menus and other Steam popups get 32-bit ARGB surfaces. The plugin never forces Big Picture; Steam's own Big Picture mode is supported.
+A Millennium plugin that gives the Steam client **native per-pixel window transparency** on Linux, without using whole-window opacity. The main window and Steam popups get 32-bit ARGB surfaces; a transparent Steam theme supplies the translucent background colors.
 
-Steam's Chromium (CEF) window is normally created as an opaque surface. Themes such as SpaceTheme implement Mica-style transparency with `rgba()` backgrounds, but on Linux those alpha values are composited against an opaque black surface, so the desktop never shows through.
+Steam's Chromium (CEF) window is normally opaque. This plugin changes Steam's native window-creation flags:
 
-This plugin changes the native window flags Steam uses when it creates the main window and its popups:
-
-```
+```text
 createflags |= Composited | TransparentParentWindow
 ```
 
-That makes Steam create a 32-bit ARGB window, so the theme's alpha reveals the desktop. Text and images stay fully opaque.
+so the theme's alpha reveals the desktop instead of being composited against opaque black.
 
 ## How it works
 
-1. After Steam starts, the plugin backend patches `steamui/sp.js` on disk and backs up the original as `sp.js.millennium-original`.
-2. It also patches `ubuntu12_64/steamwebhelper_sniper_wrap.sh`: it removes Steam's `-use_xcomposite_workaround` webhelper argument and adds `--default-background-color=00000000`. The running webhelper is restarted once so the flag takes effect. This fixes the opaque native window state that appears after a Steam UI reload.
-3. The `sp.js` patch adds `Composited | TransparentParentWindow` to the main desktop window's `eCreationFlags`.
-4. The frontend calls `SteamClient.Browser.RestartJSContext()` once. That reloads the Steam UI and recreates the main window and its popups with the patched flags.
-5. Context menu popups are created with `Resizable | Composited | TransparentParentWindow` (`4194576`) instead of the original popup-menu flags. This makes them managed normal windows, so KWin's Glass/Blur effect can apply compositor blur when **Exclude menus** is off. The plugin also sets the same `createflags` attribute on the popup HTML. Menus may then get a normal window decoration instead of the borderless popup look.
-6. The patched `sp.js` and webhelper wrapper stay in place, so later Steam UI reloads recreate the windows transparently. If Steam restores either file, the plugin reapplies the patch; a restored wrapper triggers one webhelper restart.
-7. Disabling the plugin restores `sp.js` and the webhelper wrapper from their backups and reloads the UI.
+1. The backend patches `steamui/sp.js` and backs up the original as `sp.js.millennium-original`.
+2. It adds `Composited | TransparentParentWindow` to the main desktop window, Settings, Friends List, modal dialogs, and other Steam popups.
+3. It also patches `ubuntu12_64/steamwebhelper_sniper_wrap.sh`: it removes Steam's `-use_xcomposite_workaround` webhelper argument and adds `--default-background-color=00000000`. The webhelper can be restarted once to apply that wrapper change.
+4. Context menu popups are created with `Resizable | Composited | TransparentParentWindow` (`4194576`) so a compositor can apply blur. Menus may get normal window decoration instead of Steam's borderless menu look.
+5. A transparent Steam theme owns the actual background layers. v2.4.7 removed the plugin's Friends/Settings CSS overrides; the companion transparent QuickCSS theme now supplies them.
+6. Disabling the plugin restores `sp.js` and the webhelper wrapper from their backups and reloads the UI.
 
-Steam overwrites `sp.js` on a full client start or update, so the plugin reapplies the patch after each start. The plugin does not use Big Picture for recovery.
+Steam can overwrite `sp.js` or the webhelper wrapper on updates. The plugin reapplies them after a Steam start.
 
 ## Requirements
 
-- Linux
-- Millennium 3.6 or newer
-- A theme with transparent backgrounds. For SpaceTheme, enable **Mica & Acrylic plugin support** and set **Mica Transparency**.
-- Optional: a compositor blur effect (KWin Blur/BlurPlus) for a Mica-like blurred backdrop.
+- Linux running Steam through X11 or XWayland.
+- A running compositing manager that supports ARGB windows.
+- Millennium 3.6 or newer.
+- A transparent Steam theme. The default Steam theme needs a transparent QuickCSS theme; SpaceTheme also works with its Mica settings.
+- Optional: a compositor blur effect (KWin Glass/BlurPlus, picom, etc.) for a Mica-like backdrop.
 
-## Install from release
+## Desktop / compositor compatibility
 
-Download `steam-linux-transparency.star` from [Releases](https://github.com/NJMRgit/STLT/releases) and copy it to `~/.local/share/millennium/plugins/`. Enable **Steam Linux Transparency** in Millennium → Plugins, then restart Steam.
+The ARGB flags are Steam/X11 window flags, not KDE-specific. They work with any compositor that honors depth-32 ARGB windows.
+
+- **KDE Plasma/KWin**: tested here. KWin Glass/Blur can blur the result. The context-menu flags are specifically useful for KWin's menu blur.
+- **GNOME/Mutter, Xfce, etc.**: the transparency flags should work, but other desktops are untested. Compositor blur is desktop-specific.
+- **Wayland**: Steam currently runs through XWayland. Native Wayland Steam is not covered by these X11 flags.
+- Without a compositing manager, transparent windows may render black.
+- Context-menu decorations and focus behavior are controlled by the window manager.
+
+## Companion QuickCSS theme
+
+The plugin handles native ARGB windows; it does not paint the Steam UI background. A transparent QuickCSS theme must replace the opaque Steam backgrounds. The default-theme QuickCSS used here lives at:
+
+```text
+~/.config/millennium/quick.css
+```
+
+It covers the main library/sidebar, Steam Settings, Friends List body/list/header/tabs/footer, and the Friends right chat pane. The important Friends selectors are:
+
+```css
+html.MillenniumWindow_FriendsList body,
+html.MillenniumWindow_FriendsList .friendlistListContainer {
+    background: rgba(23, 29, 37, 0.2) !important;
+}
+
+html.MillenniumWindow_FriendsList .friendListHeaderContainer,
+html.MillenniumWindow_FriendsList .chatDialogs,
+html.MillenniumWindow_FriendsList .emptyChatDialogs,
+html.MillenniumWindow_FriendsList .multiChatDialog {
+    background: transparent !important;
+}
+```
+
+Millennium only watches `quick.css` while the Quick CSS editor is open. After editing it, reopen the editor or reload the Steam desktop UI once (`SteamClient.Browser.RestartJSContext()`) so all documents re-read it.
+
+## Install
+
+Download `steam-linux-transparency.star` from [Releases](https://github.com/NJMRgit/STLT/releases), copy it to `~/.local/share/millennium/plugins/`, and enable **Steam Linux Transparency** in Millennium → Plugins.
+
+Enabling the plugin can reload the Steam UI and, when the webhelper wrapper needs applying, restart the webhelper once. A full Steam client restart is not required for the transparency fix.
 
 ## Build from source
 
@@ -44,29 +80,26 @@ bun install
 bun run build
 ```
 
-Starlight installs the plugin to `~/.local/share/millennium/plugins/`. Enable **Steam Linux Transparency** in Millennium → Plugins, then restart Steam.
+Starlight installs the plugin to `~/.local/share/millennium/plugins/`.
 
 ## Settings
 
-- **Native window transparency** — patches `sp.js` and reloads the Steam UI.
+- **Native window transparency** — patches `sp.js` and the webhelper wrapper.
 - **Apply automatically on startup** — reapplies after a Steam start or UI reload if transparency is missing.
-- **Reapply now** — applies the current setting immediately, including the webhelper fix.
-- **Restart Steam** — fallback: fully restarts the Steam client if transparency is still wrong. The automatic webhelper fix normally makes this unnecessary.
+- **Reapply now** — applies the current setting immediately.
+- **Restart Steam** — last-resort fallback if the Steam client is in a bad native-window state.
 
-## Notes
+## Known issues
 
-- The Steam UI reloads once after the plugin applies the patch. The window may flash/reload briefly; this is expected.
-- Steam updates can change the minified `sp.js` layout. If transparency stops after an update, click **Reapply now** or disable/re-enable the plugin.
-- The plugin does not use `_NET_WM_WINDOW_OPACITY`; it does not fade the whole window.
-- v2.3.0 removes the continuous CDP polling loop that could trigger a Steam UI reload and recreate opaque windows.
-- v2.4.0 fixes the native cause of opaque windows after a Steam UI reload. The webhelper wrapper now removes `-use_xcomposite_workaround` and sets `--default-background-color=00000000`; the plugin restarts the webhelper once when it applies the patch. This works without a full Steam client restart. **Restart Steam** remains as a fallback.
-- v2.4.1 adds a theme-aware translucent Mica background to the Friends List's empty chat pane. The pane is natively transparent, but Steam paints no background there, so it looked black over a dark desktop. The layer uses the active theme's accent/background variables, keeps the window ARGB, and does not use whole-window opacity or screenshots.
-- v2.4.2 added a native alpha watchdog. v2.4.4 removed it: the persistent Friends opacity was caused by Steam's own CSS backgrounds, not native alpha loss, and automatic restarts did not fix it.
-- v2.4.4 fixes the real Friends List opacity. Steam's Friends UI paints `body` as opaque `rgb(0, 0, 0)` and uses opaque radial gradients on `.friendlistListContainer` and `.chatDialogs`. The plugin overrides those background layers with translucent theme gradients, so the existing ARGB window becomes genuinely transparent (verified 96.8% non-opaque) without restarting Steam.
-- v2.4.6 removes the v2.4.5 automatic desktop UI reload after Big Picture. Testing showed that reload itself could recreate Settings/Friends with opaque native surfaces. It was a workaround, not a root fix.
-- v2.4.7 removes the plugin's Friends List CSS overrides. The transparent default QuickCSS theme now owns Friends/Settings backgrounds. Verified with a desktop UI reload only (no Steam restart): main 62.48%, Friends 98.44%, Settings 98.13% non-opaque. Millennium's QuickCSS file watcher only runs while the Quick CSS editor is open, so a desktop UI reload is needed after editing quick.css.
-- The remaining root issue is Steam's native popup window creation: after some Steam UI reloads/recreations, Settings/Friends can come back opaque even though the main window remains ARGB. The plugin's `sp.js` flags and CSS cannot reliably reset those native surfaces. A real fix requires native interception (X11/CEF), not another CSS or restart workaround.
-- v2.4.3 extended the theme-aware Mica layer to the entire Friends window. v2.4.4 replaces the underlying opaque Friends CSS backgrounds, so the effect is genuine per-pixel transparency rather than an opaque themed window.
-- Settings and Friends List are recreated with `Composited | TransparentParentWindow` after Big Picture exits, so their transparency survives the mode switch.
-- After exiting Big Picture, the plugin restores the main window's `1010x600` minimum size and its previous desktop window size. This is built into the patched desktop window code, so it still works if the Steam UI reloads on exit.
-- Settings, Friends List, context menus, and other Steam popup windows get the same flags. Existing popups may need to be reopened after the patch is applied.
+- **Big Picture frame rate**: repeatedly entering Big Picture can become low-FPS until Steam is restarted. This is a Steam client/GPU state issue, not fixed by this plugin.
+- **Steam updates**: the minified `sp.js` layout can change. If transparency stops after an update, click **Reapply now** or disable/re-enable the plugin.
+- **Existing popups**: Settings/Friends opened before a patch may need to be reopened.
+- **Friends chat pane**: the native window is transparent, but Steam's Friends CSS paints opaque backgrounds. The companion QuickCSS theme must override `body`, `.friendlistListContainer`, `.chatDialogs`, `.emptyChatDialogs`, and `.multiChatDialog`.
+- The plugin does not use `_NET_WM_WINDOW_OPACITY`, whole-window opacity, screenshots, or a wallpaper fallback.
+
+## Version notes
+
+- v2.4.7: removed the plugin's Friends List CSS overrides; the transparent QuickCSS theme owns Friends/Settings backgrounds. Verified: main 62.48%, Friends 98.44%, Settings 98.13% non-opaque after a desktop UI reload only.
+- v2.4.6: removed the automatic Big Picture UI reload; it could recreate windows opaque.
+- v2.4.4/v2.4.2: removed the automatic webhelper opacity watchdog; it did not fix opaque CSS backgrounds.
+- v2.4.0: webhelper wrapper fix; v2.3.0 removed the continuous CDP polling loop.
