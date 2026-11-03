@@ -180,3 +180,52 @@ html.MillenniumWindow_FriendsList .groupCount {
     color: #dfe3e6 !important;
     opacity: 1 !important;
 }
+
+/* ===== Downloads page ===== */
+html.MillenniumWindow_MainSteamWindow ._1bq4x9pa4-9RLY-dXWUZTp {
+    background: radial-gradient(at 0px 0px, rgba(61, 68, 80, 0.75) 0%, rgba(35, 38, 46, 0.75) 90%) !important;
+}
+html.MillenniumWindow_MainSteamWindow ._3Mbhnlk1Go2j8yCdjthzc7._2KB3yVOsiRCK9qK6mwKl9c {
+    background-color: rgba(14, 20, 27, 0.6) !important;
+}
+
+/* ===== Friends chat window / tabs ===== */
+html.friendsui-container .chatWindow {
+    background: rgba(23, 29, 37, 0.2) !important;
+    background-color: rgba(23, 29, 37, 0.2) !important;
+}
+html.friendsui-container .chatEntry {
+    background-color: rgba(34, 37, 43, 0.2) !important;
+}
+html.friendsui-container .chatEntry form {
+    background-color: rgba(27, 28, 32, 0.2) !important;
+}
+html.friendsui-container ._2XZq-_f6npaQdAgeRzKIkz {
+    background-color: rgba(58, 62, 70, 0.2) !important;
+}
+
+/* Notifications menu "Clear all"/button */
+html.MillenniumWindow_ContextMenu ._1oERP7bVictkby2hP4BBva {
+    background-color: rgba(61, 68, 80, 0.2) !important;
+}
+
+/* ===== Steam desktop notification toasts (friend online / now playing) ===== */
+/* Short controller/battery toasts use .fntOoeLPSTpmyXGGmgf99 and stay opaque. */
+html:has(._1OOQPJx0nCNP9ME9toCmV7) {
+    background: transparent !important;
+}
+html:has(._1OOQPJx0nCNP9ME9toCmV7) body {
+    background: transparent !important;
+}
+._1OOQPJx0nCNP9ME9toCmV7 {
+    background: transparent !important;
+}
+._1OOQPJx0nCNP9ME9toCmV7::before {
+    display: none !important;
+}
+._1OOQPJx0nCNP9ME9toCmV7 ._2NdiftmP-B3C4LPWnNGTCB,
+._1OOQPJx0nCNP9ME9toCmV7 ._3-H47wPl1Ng3lh7xGZOPIg {
+    background-color: rgba(10, 10, 10, 0.2) !important;
+    border: 3px solid rgba(38, 41, 44, 0.2) !important;
+    border-radius: 2px !important;
+}
