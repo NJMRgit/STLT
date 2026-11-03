@@ -205,13 +205,19 @@ function startMinSizeWatch() {
 		});
 	} catch {}
 
-	if (minSizeTimer) clearInterval(minSizeTimer);
-	minSizeTimer = setInterval(() => {
-		enforceMinSizeAfterBigPicture().catch(() => {});
-	}, 3000);
+	// The sp.js desktop effect handles Big Picture exit retries itself.
+	// Avoid a continuous CDP attach/evaluate loop, which can destabilize CEF.
 	setTimeout(() => {
 		enforceMinSizeAfterBigPicture().catch(() => {});
 	}, 1000);
+
+	if (diskPatchTimer) clearInterval(diskPatchTimer);
+	diskPatchTimer = setInterval(() => {
+		watchDiskPatch().catch(() => {});
+	}, 10000);
+	setTimeout(() => {
+		watchDiskPatch().catch(() => {});
+	}, 3000);
 }
 
 async function apply(force = false): Promise<boolean> {
@@ -300,6 +306,19 @@ function registerMenuPopupHook() {
 	} catch {}
 }
 
+let diskPatchTimer: any = null;
+
+async function watchDiskPatch() {
+	if (!state.enabled) return;
+	try {
+		const status = await backend.ensure_sp_patch();
+		if (status === 'patched') {
+			await log('disk patch restored; reloading UI');
+			await restartUi();
+		}
+	} catch {}
+}
+
 const Settings = () => {
 	const [enabled, setEnabled] = usePluginConfig<boolean>(ENABLED_KEY);
 	const [auto, setAuto] = usePluginConfig<boolean>(AUTO_KEY);
@@ -361,6 +380,9 @@ export default definePlugin(async () => {
 		onDismount() {
 			try {
 				menuPopupHandle?.Unsubscribe?.();
+			} catch {}
+			try {
+				if (diskPatchTimer) clearInterval(diskPatchTimer);
 			} catch {}
 		},
 	};

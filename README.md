@@ -56,6 +56,7 @@ Starlight installs the plugin to `~/.local/share/millennium/plugins/`. Enable **
 - The Steam UI reloads once after the plugin applies the patch. The window may flash/reload briefly; this is expected.
 - Steam updates can change the minified `sp.js` layout. If transparency stops after an update, click **Reapply now** or disable/re-enable the plugin.
 - The plugin does not use `_NET_WM_WINDOW_OPACITY`; it does not fade the whole window.
+- v2.3.0 removes the continuous CDP polling loop that could trigger a Steam UI reload and recreate opaque windows.
 - Settings and Friends List are recreated with `Composited | TransparentParentWindow` after Big Picture exits, so their transparency survives the mode switch.
 - After exiting Big Picture, the plugin restores the main window's `1010x600` minimum size and its previous desktop window size. This is built into the patched desktop window code, so it still works if the Steam UI reloads on exit.
 - Settings, Friends List, context menus, and other Steam popup windows get the same flags. Existing popups may need to be reopened after the patch is applied.
