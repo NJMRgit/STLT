@@ -67,6 +67,28 @@ html.MillenniumWindow_FriendsList .multiChatDialog {
 
 Millennium only watches `quick.css` while the Quick CSS editor is open. After editing it, reopen the editor or reload the Steam desktop UI once (`SteamClient.Browser.RestartJSContext()`) so all documents re-read it.
 
+## Optional Glass Theme
+
+The repository includes an optional glass theme based on Steam's default theme:
+
+- File: [`themes/steam-default-glass.css`](themes/steam-default-glass.css)
+- Requires Millennium QuickCSS.
+- Optional; the plugin's native transparency works with any transparent theme.
+- Designed for the Steam default theme, not SpaceTheme.
+
+To install it, back up the current QuickCSS file and copy the theme:
+
+```bash
+cp ~/.config/millennium/quick.css ~/.config/millennium/quick.css.bak
+cp themes/steam-default-glass.css ~/.config/millennium/quick.css
+```
+
+Alternatively, paste the file contents into **Millennium → Quick CSS**.
+
+After changing `quick.css`, open the Quick CSS editor once to register Millennium's file watcher, or reload the Steam desktop UI once. A full Steam client restart is not required.
+
+The theme targets the current Steam UI hashed class names, verified against Steam UI build `1792618285`. Steam UI updates can change those classes; selectors may then need updating.
+
 ## Install
 
 Download `steam-linux-transparency.star` from [Releases](https://github.com/NJMRgit/STLT/releases), copy it to `~/.local/share/millennium/plugins/`, and enable **Steam Linux Transparency** in Millennium → Plugins.

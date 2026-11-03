@@ -1,0 +1,182 @@
+/* Transparent Steam default theme — Millennium QuickCSS
+   Default Steam layout/colors with SpaceTheme's 20% Mica transparency.
+   Native per-pixel window transparency comes from the steam-linux-transparency plugin. */
+
+/* ===== Main window ===== */
+._1ENHEsrSLcTRtPQFl1F-wL { background: transparent !important; }
+._2Dd4T78PcCTUVgOtDGFY5j { background: transparent !important; }
+
+/* Top title/nav bar */
+._3Z7VQ1IMk4E3HsHvrkLNgo { background: rgba(23, 29, 37, 0.2) !important; }
+
+/* Bottom bar */
+._3vCzSrrXZzZjVJFZNg9SGu { background: rgba(23, 29, 37, 0.2) !important; }
+
+/* Right pane */
+._3VQUewWB8g6Z5qB4C7dGFr {
+    background: linear-gradient(rgba(45, 51, 60, 0.2) 0%, rgba(35, 39, 45, 0.2) 20%, rgba(23, 29, 37, 0.2) 60%) !important;
+}
+
+/* Library content layer */
+._3Sb2o_mQ30IDRh0C72QUUu { background: transparent !important; }
+
+/* Left sidebar */
+._3x1HklzyDs4TEjACrRO2tB {
+    background: linear-gradient(rgba(45, 51, 60, 0.2) 0%, rgba(36, 40, 47, 0.2) 30%) !important;
+}
+
+/* Library page header fade */
+._17uEBe5Ri8TMsnfELvs8-N {
+    background: linear-gradient(to top, rgba(23, 29, 37, 0.15) 0%, rgba(45, 51, 60, 0.15) 80%) !important;
+}
+
+/* Sidebar group headers (FAVORITES / UNCATEGORIZED / STEAM FAMILY) */
+html.MillenniumWindow_MainSteamWindow ._2sYIghGVXJr6tsQVvcryy8 {
+    background: linear-gradient(to right, rgba(41, 47, 59, 0.2) 40%, rgba(62, 78, 105, 0) 100%) !important;
+}
+
+/* Blue download bar sits behind the footer and makes it look opaque */
+html.MillenniumWindow_MainSteamWindow ._2iJsgdTIX9Tj23rWnB7Q-c {
+    background-color: transparent !important;
+}
+
+/* ===== Context / root menus ===== */
+html.MillenniumWindow_ContextMenu body.ContextMenuPopupBody { background: transparent !important; }
+html.MillenniumWindow_ContextMenu .PP7LM0Ow1K5qkR8WElLpt,
+html.MillenniumWindow_ContextMenu ._2EstNjFIIZm_WUSKm5Wt7n {
+    background-color: rgba(61, 68, 80, 0.2) !important;
+}
+html.MillenniumWindow_ContextMenu ._1n7Wloe5jZ6fSuvV18NNWI:hover,
+html.MillenniumWindow_ContextMenu ._1n7Wloe5jZ6fSuvV18NNWI._18z-3vkWndCBO5WJgFldRK {
+    background-color: rgba(70, 77, 88, 0.2) !important;
+}
+
+/* ===== Steam Settings and Millennium settings ===== */
+html.MillenniumWindow_Settings body.ModalDialogBody { background: transparent !important; }
+html.MillenniumWindow_Settings .DialogContentTransition,
+html.MillenniumWindow_MainSteamWindow .MillenniumSettings .DialogContentTransition {
+    background: radial-gradient(circle at left top, rgba(74, 81, 92, 0.2) 0%, rgba(75, 81, 92, 0) 60%), rgba(37, 40, 46, 0.2) !important;
+}
+html.MillenniumWindow_Settings .DialogContent,
+html.MillenniumWindow_MainSteamWindow .MillenniumSettings .DialogContent {
+    background-color: rgba(23, 29, 37, 0.2) !important;
+}
+html.MillenniumWindow_Settings .PageListColumn,
+html.MillenniumWindow_MainSteamWindow .MillenniumSettings .PageListColumn {
+    background-color: rgba(42, 45, 52, 0.2) !important;
+}
+html.MillenniumWindow_Settings .eKmEXJCm_lgme24Fp_HWt,
+html.MillenniumWindow_MainSteamWindow .MillenniumSettings .eKmEXJCm_lgme24Fp_HWt {
+    background-color: rgba(35, 38, 46, 0.2) !important;
+}
+html.MillenniumWindow_Settings .JA6JIY08WWMEfWP-sZkZ2 {
+    background-color: rgba(35, 38, 46, 0.2) !important;
+}
+html.MillenniumWindow_Settings ._1-vlriAtKYDViAEunue4VO._2DpXjzK3WWsOtUWUrcuOG7,
+html.MillenniumWindow_MainSteamWindow .MillenniumSettings ._1-vlriAtKYDViAEunue4VO._2DpXjzK3WWsOtUWUrcuOG7 {
+    background-color: rgba(61, 68, 80, 0.2) !important;
+}
+
+/* ===== Friends List ===== */
+html.MillenniumWindow_FriendsList { background: transparent !important; }
+html.MillenniumWindow_FriendsList body {
+    background: radial-gradient(at 25% 0%, rgba(102, 108, 255, 0.2), rgba(0, 0, 0, 0) 65%),
+                linear-gradient(135deg, rgba(64, 68, 78, 0.2), rgba(20, 24, 30, 0.2)) !important;
+    background-color: transparent !important;
+}
+html.MillenniumWindow_FriendsList .friendlistListContainer {
+    background: radial-gradient(at 25% 0%, rgba(102, 108, 255, 0.2), rgba(0, 0, 0, 0) 65%),
+                linear-gradient(135deg, rgba(64, 68, 78, 0.2), rgba(20, 24, 30, 0.2)) !important;
+    background-color: transparent !important;
+}
+html.MillenniumWindow_FriendsList .friendListHeaderContainer { background: transparent !important; }
+html.MillenniumWindow_FriendsList .friendsListSectionTitle,
+html.MillenniumWindow_FriendsList .friendTab.socialListTab { background-color: rgba(67, 73, 83, 0.2) !important; }
+html.MillenniumWindow_FriendsList .friendListFooter,
+html.MillenniumWindow_FriendsList .singleWindowDivider { background-color: rgba(34, 37, 43, 0.2) !important; }
+html.MillenniumWindow_FriendsList .ChatTabs { background-color: rgba(28, 35, 44, 0.2) !important; }
+
+/* Library search bar and search-results header */
+html.MillenniumWindow_MainSteamWindow ._20QAC4WMXm8qFE8waUT5oo,
+html.MillenniumWindow_MainSteamWindow ._2PF_m-I5yte3WnQhpcz8RC {
+    background-color: rgba(33, 33, 36, 0.2) !important;
+}
+html.MillenniumWindow_MainSteamWindow .vCCmYvn9yQ_V8CpKupllU {
+    background-color: rgba(45, 47, 54, 0.2) !important;
+}
+html.MillenniumWindow_MainSteamWindow .Woh0kBQCmatzC1daBX9i6 {
+    background-color: rgba(63, 64, 71, 0.2) !important;
+}
+
+/* Friends right chat panel (plugin v2.4.7 no longer covers it) */
+html.MillenniumWindow_FriendsList .chatDialogs,
+html.MillenniumWindow_FriendsList .emptyChatDialogs,
+html.MillenniumWindow_FriendsList .multiChatDialog {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* ===== Game detail page ===== */
+/* 12px strip between the top bar and the page */
+html.MillenniumWindow_MainSteamWindow ._2CmrnGY-Amtd83ScJkFvx2 {
+    background-color: rgba(23, 29, 37, 0.2) !important;
+}
+
+/* Main game-page surface: same transparency as the sidebar/pane */
+html.MillenniumWindow_MainSteamWindow ._3FmxxjyWNHU1PrBGnBe6tm,
+html.MillenniumWindow_MainSteamWindow ._2jPMy2QZr8bWi6yrk5ZzHA,
+html.MillenniumWindow_MainSteamWindow .Jbe--NUNw7sxbxGsMSjVa,
+html.MillenniumWindow_MainSteamWindow ._3LE-6w1ItIAB4CKJFCa3Od,
+html.MillenniumWindow_MainSteamWindow ._2SAb6geDpe6toA1GaP0GjH,
+html.MillenniumWindow_MainSteamWindow ._38t1mljBjmJfqjpVzMT1CG,
+html.MillenniumWindow_MainSteamWindow ._3QRf-tp5VddAF00vWY5Gn8,
+html.MillenniumWindow_MainSteamWindow ._1JlC29Ic6L-QvL-39X_d-X,
+html.MillenniumWindow_MainSteamWindow ._31ptFGGMZrSQc5BCX1e5lm,
+html.MillenniumWindow_MainSteamWindow ._5uvIN6jXDXzzck59F-nhv,
+html.MillenniumWindow_MainSteamWindow ._2JSyABqFEh-v_dwaTnBydR {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Blurred banner mirror/backdrop */
+html.MillenniumWindow_MainSteamWindow .HNbe3eZf6H7dtJ042x1vM.HSQWw9HUAP6jtA2OZjS-u,
+html.MillenniumWindow_MainSteamWindow ._3_IUVzR9tpG_JKEjhwXEAb {
+    display: none !important;
+}
+
+/* Home / grid row at the top of the library sidebar */
+html.MillenniumWindow_MainSteamWindow ._2TKEazUUS3TlniZfpc8OOe {
+    background-color: rgba(23, 29, 37, 0.2) !important;
+}
+html.MillenniumWindow_MainSteamWindow a._3pSPluBgf0NeR1kkCLWMhR {
+    background-color: rgba(62, 64, 71, 0.2) !important;
+}
+html.MillenniumWindow_MainSteamWindow a._3pSPluBgf0NeR1kkCLWMhR._30KGSfPjPskFlnrSxBfkiK {
+    background-color: rgba(37, 39, 45, 0.2) !important;
+}
+
+/* ===== Collections page ===== */
+html.MillenniumWindow_MainSteamWindow ._3lDczhulqraStjCitLYJ1K.u1xD3KJEgksF_J_5TLZzO {
+    background: rgba(23, 29, 37, 0.12) !important;
+}
+html.MillenniumWindow_MainSteamWindow ._3IWn-2rn7x98o5fDd0rAxb {
+    background-color: rgba(49, 61, 83, 0.2) !important;
+}
+
+/* Remove the blurred backdrop that creates the dark band below the hero */
+html.MillenniumWindow_MainSteamWindow .Jbe--NUNw7sxbxGsMSjVa {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Friends List: group chats row + expand/collapse and count indicators */
+html.MillenniumWindow_FriendsList .chatRoomListContainer {
+    background: transparent !important;
+}
+html.MillenniumWindow_FriendsList .ExpandPlusMinus {
+    filter: grayscale(1) brightness(3) !important;
+}
+html.MillenniumWindow_FriendsList .groupCount {
+    color: #dfe3e6 !important;
+    opacity: 1 !important;
+}
