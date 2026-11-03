@@ -416,25 +416,6 @@ function refreshPopupStyles() {
 	} catch {}
 }
 
-let lastUIMode: number | null = null;
-let uiModeTimer: any = null;
-
-function watchUIMode() {
-	if (uiModeTimer) clearInterval(uiModeTimer);
-	uiModeTimer = setInterval(async () => {
-		try {
-			const mode = await (steamGlobal().SteamClient?.UI?.GetUIMode?.() ?? 7);
-			if (lastUIMode !== null && lastUIMode !== 7 && mode === 7) {
-				await log('Big Picture exit detected; reloading Steam UI');
-				setTimeout(() => {
-					restartUi().catch(() => {});
-				}, 1500);
-			}
-			lastUIMode = mode;
-		} catch {}
-	}, 2000);
-}
-
 let diskPatchTimer: any = null;
 
 async function watchDiskPatch() {
@@ -527,7 +508,6 @@ export default definePlugin(async () => {
 	} catch {}
 	await log('definePlugin enabled=' + state.enabled + ' auto=' + state.autoApply);
 	registerMenuPopupHook();
-	watchUIMode();
 	startMinSizeWatch();
 	autoApply();
 	return {
