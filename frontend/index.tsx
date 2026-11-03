@@ -319,6 +319,17 @@ async function watchDiskPatch() {
 	} catch {}
 }
 
+async function restartSteam() {
+	try {
+		const ok = await (globalThis as any).backend?.schedule_steam_restart?.();
+		if (ok) {
+			try {
+				steamGlobal().SteamClient?.User?.StartShutdown?.(false);
+			} catch {}
+		}
+	} catch {}
+}
+
 const Settings = () => {
 	const [enabled, setEnabled] = usePluginConfig<boolean>(ENABLED_KEY);
 	const [auto, setAuto] = usePluginConfig<boolean>(AUTO_KEY);
@@ -357,6 +368,12 @@ const Settings = () => {
 				description="Reapply the window flags and reload the Steam UI without restarting Steam."
 			>
 				<DialogButton onClick={() => apply(true)}>Reapply now</DialogButton>
+			</Field>
+			<Field
+				label="Restart Steam"
+				description="Restart the Steam client to restore native ARGB transparency after a Steam UI reload has made windows opaque. This closes the Steam client and relaunches it."
+			>
+				<DialogButton onClick={restartSteam}>Restart Steam</DialogButton>
 			</Field>
 		</>
 	);

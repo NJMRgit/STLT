@@ -206,6 +206,14 @@ function restore_sp_patch()
     return "restored"
 end
 
+---@ffi
+---@return boolean
+function schedule_steam_restart()
+    -- Detached shell survives Steam shutdown and relaunches the client.
+    local ok = os.execute("setsid sh -c 'sleep 8; nohup /usr/bin/steam >/dev/null 2>&1 &' >/dev/null 2>&1 &")
+    return ok == true or ok == 0
+end
+
 local function on_load()
     log("backend loaded")
     millennium.ready()

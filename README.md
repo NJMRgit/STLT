@@ -50,6 +50,7 @@ Starlight installs the plugin to `~/.local/share/millennium/plugins/`. Enable **
 - **Native window transparency** — patches `sp.js` and reloads the Steam UI.
 - **Apply automatically on startup** — reapplies after a Steam start or UI reload if transparency is missing.
 - **Reapply now** — applies the current setting immediately.
+- **Restart Steam** — restarts the Steam client to restore ARGB transparency after a Steam UI reload has made windows opaque.
 
 ## Notes
 
@@ -57,6 +58,7 @@ Starlight installs the plugin to `~/.local/share/millennium/plugins/`. Enable **
 - Steam updates can change the minified `sp.js` layout. If transparency stops after an update, click **Reapply now** or disable/re-enable the plugin.
 - The plugin does not use `_NET_WM_WINDOW_OPACITY`; it does not fade the whole window.
 - v2.3.0 removes the continuous CDP polling loop that could trigger a Steam UI reload and recreate opaque windows.
+- Steam UI reloads (theme changes, plugin saves, etc.) can still cause the Steam client's native window manager to create opaque windows. This is a Steam client limitation; a full Steam client restart restores ARGB visuals. Use **Restart Steam** in the plugin settings or restart Steam manually.
 - Settings and Friends List are recreated with `Composited | TransparentParentWindow` after Big Picture exits, so their transparency survives the mode switch.
 - After exiting Big Picture, the plugin restores the main window's `1010x600` minimum size and its previous desktop window size. This is built into the patched desktop window code, so it still works if the Steam UI reloads on exit.
 - Settings, Friends List, context menus, and other Steam popup windows get the same flags. Existing popups may need to be reopened after the patch is applied.

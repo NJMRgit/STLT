@@ -10,7 +10,7 @@
     "@steambrew/starlight": "^1.1.3"
   },
   "name": "steam-linux-transparency",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Native per-pixel window transparency for Steam on Linux.",
   "author": "NJMRgit",
   "license": "MIT",
