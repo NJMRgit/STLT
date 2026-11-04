@@ -212,11 +212,7 @@ local function wrapper_path()
 end
 
 local WRAPPER_ORIGINAL = 'exec ./steamwebhelper "$@"'
-local WRAPPER_PATCHED = [=[args=()
-for a in "$@"; do
-    [ "$a" = "-use_xcomposite_workaround" ] || args+=("$a")
-done
-exec ./steamwebhelper --default-background-color=00000000 "${args[@]}"]=]
+local WRAPPER_PATCHED = 'exec ./steamwebhelper "$@" --disable-features=CalculateNativeWinOcclusion'
 
 ---@ffi
 ---@return string
@@ -227,15 +223,25 @@ function ensure_wrapper_patch()
         log("read steamwebhelper wrapper failed: " .. tostring(err))
         return "read_failed"
     end
-    if content:find("--default-background-color=00000000", 1, true) and content:find('args+=("$a")', 1, true) then
+    if content:find("--disable-features=CalculateNativeWinOcclusion", 1, true) then
         return "already"
     end
+    local backup = path .. ".millennium-original"
     local patched = replace_plain(content, WRAPPER_ORIGINAL, WRAPPER_PATCHED)
+    if not patched and fs.exists(backup) then
+        local backup_content = utils.read_file(backup)
+        if backup_content then
+            patched = replace_plain(backup_content, WRAPPER_ORIGINAL, WRAPPER_PATCHED)
+            if patched then
+                content = backup_content
+                log("steamwebhelper wrapper upgraded from backup")
+            end
+        end
+    end
     if not patched then
         log("steamwebhelper wrapper pattern not found")
         return "pattern_not_found"
     end
-    local backup = path .. ".millennium-original"
     if not fs.exists(backup) then
         local ok, write_err = utils.write_file(backup, content)
         if not ok then
@@ -284,6 +290,18 @@ function webhelper_has_legacy_flag()
     local s = p:read("*a") or ""
     p:close()
     return s:find("-use_xcomposite_workaround", 1, true) ~= nil
+end
+
+---@ffi
+---@return boolean
+function webhelper_has_throttle_flags()
+    local p = io.popen("ps -eo cmd | grep '[.]\\/steamwebhelper' | grep -v -- '--type=' | head -1")
+    if not p then
+        return false
+    end
+    local s = p:read("*a") or ""
+    p:close()
+    return s:find("--disable-features=CalculateNativeWinOcclusion", 1, true) ~= nil
 end
 
 ---@ffi

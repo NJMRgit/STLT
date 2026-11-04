@@ -16,7 +16,7 @@ so the theme's alpha reveals the desktop instead of being composited against opa
 
 1. The backend patches `steamui/sp.js` and backs up the original as `sp.js.millennium-original`.
 2. It adds `Composited | TransparentParentWindow` to the main desktop window, Settings, Friends List, modal dialogs, and other Steam popups.
-3. It also patches `ubuntu12_64/steamwebhelper_sniper_wrap.sh`: it removes Steam's `-use_xcomposite_workaround` webhelper argument and adds `--default-background-color=00000000`. The webhelper can be restarted once to apply that wrapper change.
+3. It also appends `--disable-features=CalculateNativeWinOcclusion` to `ubuntu12_64/steamwebhelper_sniper_wrap.sh`. Steam/CEF otherwise marks a re-opened Big Picture window as occluded and throttles it to about 20 FPS. The flag must come after Steam's own arguments, because Steam passes another `--disable-features` list that would override an earlier one. The webhelper restarts once to apply this change.
 4. Context menu popups are created with `Resizable | Composited | TransparentParentWindow` (`4194576`) so a compositor can apply blur. Menus may get normal window decoration instead of Steam's borderless menu look.
 5. A transparent Steam theme owns the actual background layers. v2.4.7 removed the plugin's Friends/Settings CSS overrides; the companion transparent QuickCSS theme now supplies them.
 6. Disabling the plugin restores `sp.js` and the webhelper wrapper from their backups and reloads the UI.
@@ -113,7 +113,7 @@ Starlight installs the plugin to `~/.local/share/millennium/plugins/`.
 
 ## Known issues
 
-- **Big Picture frame rate**: repeatedly entering Big Picture can become low-FPS until Steam is restarted. This is a Steam client/GPU state issue, not fixed by this plugin.
+- **Big Picture frame rate (fixed in v2.4.8)**: Steam/CEF's native window occlusion calculation could mark a re-entered Big Picture window as occluded and throttle it to about 20 FPS. The plugin now disables that calculation with a webhelper argument appended after Steam's own arguments. If the wrapper is overwritten, restart Steam or click **Reapply now**.
 - **Steam updates**: the minified `sp.js` layout can change. If transparency stops after an update, click **Reapply now** or disable/re-enable the plugin.
 - **Existing popups**: Settings/Friends opened before a patch may need to be reopened.
 - **Friends chat pane**: the native window is transparent, but Steam's Friends CSS paints opaque backgrounds. The companion QuickCSS theme must override `body`, `.friendlistListContainer`, `.chatDialogs`, `.emptyChatDialogs`, and `.multiChatDialog`.
