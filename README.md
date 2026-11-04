@@ -41,51 +41,19 @@ The ARGB flags are Steam/X11 window flags, not KDE-specific. They work with any 
 - Without a compositing manager, transparent windows may render black.
 - Context-menu decorations and focus behavior are controlled by the window manager.
 
-## Companion QuickCSS theme
+## Optional glass QuickCSS theme
 
-The plugin handles native ARGB windows; it does not paint the Steam UI background. A transparent QuickCSS theme must replace the opaque Steam backgrounds. The default-theme QuickCSS used here lives at:
-
-```text
-~/.config/millennium/quick.css
-```
-
-It covers the main library/sidebar, Steam Settings, Friends List body/list/header/tabs/footer, and the Friends right chat pane. The important Friends selectors are:
-
-```css
-html.MillenniumWindow_FriendsList body,
-html.MillenniumWindow_FriendsList .friendlistListContainer {
-    background: rgba(23, 29, 37, 0.2) !important;
-}
-
-html.MillenniumWindow_FriendsList .friendListHeaderContainer,
-html.MillenniumWindow_FriendsList .chatDialogs,
-html.MillenniumWindow_FriendsList .emptyChatDialogs,
-html.MillenniumWindow_FriendsList .multiChatDialog {
-    background: transparent !important;
-}
-```
-
-Millennium only watches `quick.css` while the Quick CSS editor is open. After editing it, reopen the editor or reload the Steam desktop UI once (`SteamClient.Browser.RestartJSContext()`) so all documents re-read it.
-
-## Optional Glass Theme
+The plugin sets native ARGB window flags; it does not paint the Steam UI background. A transparent QuickCSS theme must replace Steam's opaque backgrounds.
 
 The repository includes an optional glass theme based on Steam's default theme:
 
 - File: [`themes/steam-default-glass.css`](themes/steam-default-glass.css)
 - Requires Millennium QuickCSS.
-- Optional; the plugin's native transparency works with any transparent theme.
-- Designed for the Steam default theme, not SpaceTheme.
+- Designed for the Steam default theme, not SpaceTheme. The plugin's native transparency works with any transparent theme.
 
-To install it, back up the current QuickCSS file and copy the theme:
+To use it, copy the contents of `themes/steam-default-glass.css` into **Millennium → Quick CSS** and save.
 
-```bash
-cp ~/.config/millennium/quick.css ~/.config/millennium/quick.css.bak
-cp themes/steam-default-glass.css ~/.config/millennium/quick.css
-```
-
-Alternatively, paste the file contents into **Millennium → Quick CSS**.
-
-After changing `quick.css`, open the Quick CSS editor once to register Millennium's file watcher, or reload the Steam desktop UI once. A full Steam client restart is not required.
+Millennium only watches `quick.css` while the Quick CSS editor is open. After saving, reopen the editor or reload the Steam desktop UI once (`SteamClient.Browser.RestartJSContext()`). A full Steam client restart is not required.
 
 The theme targets the current Steam UI hashed class names, verified against Steam UI build `1792618285`. Steam UI updates can change those classes; selectors may then need updating.
 
