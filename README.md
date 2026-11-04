@@ -2,6 +2,8 @@
 
 [Repository](https://github.com/NJMRgit/STLT) · [Releases](https://github.com/NJMRgit/STLT/releases)
 
+<img width="2243" height="1392" alt="image" src="https://github.com/user-attachments/assets/fc2663d6-8c9f-4e87-8241-2dfea6da1b92" />
+
 A Millennium plugin that gives the Steam client **native per-pixel window transparency** on Linux, without using whole-window opacity. The main window and Steam popups get 32-bit ARGB surfaces; a transparent Steam theme supplies the translucent background colors.
 
 Steam's Chromium (CEF) window is normally opaque. This plugin changes Steam's native window-creation flags:
