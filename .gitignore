@@ -6,3 +6,4 @@ dist/
 *.bak
 *.bak.*
 .DS_Store
+.millennium/lsp/

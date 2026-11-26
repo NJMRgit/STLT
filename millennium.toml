@@ -1,16 +1,12 @@
 [plugin]
 id = "steam-linux-transparency"
 name = "Steam Linux Transparency"
-version = "2.4.8"
+version = "3.0.0"
 author = "NJMRgit"
-description = "Native per-pixel window transparency for Steam on Linux. Themes with transparent backgrounds can show the desktop."
-
-[backend]
-entry = "backend/main.lua"
-sources = ["backend/**/*.lua"]
+description = "Native per-pixel window transparency for Steam on Linux, applied at runtime. No Steam files are patched."
 
 [frontend]
-entry = "frontend/index.tsx"
+entry = "frontend/index.ts"
 
 [compiler]
 output_path = "auto"
